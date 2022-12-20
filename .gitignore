@@ -3,3 +3,6 @@ node_modules/
 
 #Excluding .env File
 .env
+
+#Excluding uploads Folder
+public/uploads
