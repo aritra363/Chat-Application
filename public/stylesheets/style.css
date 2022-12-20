@@ -16,7 +16,8 @@
   --blue: #00b3bd;
   --light: #fff;
   --red: indianred;
-  --theme:#812B46;
+  --theme1: #812b46;
+  --theme2: #3f5d81;
 }
 
 /* common global styles */
@@ -48,7 +49,7 @@ body {
 }
 
 p.error {
-  color: var(--theme);
+  color: var(--theme1);
   font-size: 1.2rem;
   display: none;
 }
@@ -73,7 +74,7 @@ input {
 }
 
 input.error {
-  border: 1px solid var(--theme);
+  border: 1px solid var(--theme1);
 }
 
 input[type="submit"] {
@@ -114,7 +115,7 @@ input[type="submit"]:active {
   border: 3px solid;
   border-image-slice: 1;
   border-width: 3px;
-  border-image-source: linear-gradient(to left, var(--green), var(--blue));
+  border-image-source: linear-gradient(to left, var(--theme1), var(--theme2));
 }
 
 .modal .modal-title {
@@ -273,7 +274,7 @@ input[type="submit"]:active {
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--theme1);
 }
 
 .title-text {
@@ -603,7 +604,7 @@ input[type="submit"]:active {
 }
 
 #users-table thead tr {
-  background-color: var(--green);
+  background-color: var(--theme2);
   color: var(--primary);
   text-align: left;
 }
@@ -634,7 +635,7 @@ input[type="submit"]:active {
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--theme1);
 }
 
 #users-table tbody .name span {
@@ -646,7 +647,7 @@ input[type="submit"]:active {
 }
 
 #users-table tbody tr:last-of-type {
-  border-bottom: 2px solid var(--green);
+  border-bottom: 2px solid var(--theme2);
 }
 
 #users-table .manage img {

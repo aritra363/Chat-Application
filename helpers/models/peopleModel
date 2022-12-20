@@ -1,0 +1,16 @@
+/* 
+  Title :  People's Model
+  Description : Model of the people's collection
+  Author : Aritra Pal
+  Date : 20/12/2022 
+*/
+
+//dependencies
+const mongoose = require("mongoose");
+const peopleSchema = require("../schemas/peopleSchema");
+
+//creating people Model
+const peopleModel = mongoose.model("People", peopleSchema);
+
+//exporting the Model
+module.exports = peopleModel;
