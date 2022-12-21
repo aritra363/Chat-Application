@@ -38,16 +38,24 @@
             </tr>
           </thead>
           <tbody id="users-table">
-            <tr id="">
+            <% Udata.forEach(function(item){%>
+            <tr id="<%= item._id%>">
               <td class="name">
-                <img src="./images/user1.png" />
-                <span>User 1</span>
+                <img
+                  src="http://127.0.0.1:3000/uploads/avatars/<%= item.avatar%>"
+                />
+                <span><%= item.name%></span>
               </td>
-              <td>email@email.com</td>
+              <td><%= item.email%></td>
               <td class="manage">
-                <img src="./images/trash.png" alt="Delete" />
+                <img
+                  src="./images/trash.png"
+                  alt="Delete"
+                  onclick="removeuser('<%=item._id%>')"
+                />
               </td>
             </tr>
+            <% }) %>
           </tbody>
         </table>
       </div>
@@ -60,17 +68,27 @@
           <h2>Create New User</h2>
         </div>
         <div class="modal-body">
-          <form id="add-user-form">
+          <form
+            method="post"
+            action="/users"
+            enctype="multipart/form-data"
+            id="add-user-form"
+          >
             <input type="text" placeholder="enter name" name="name" />
-            <p class="error show">This is error</p>
+            <p class="error name-error"></p>
             <input type="text" placeholder="enter email" name="email" />
+            <p class="error email-error"></p>
             <input type="text" placeholder="enter mobile" name="mobile" />
+            <p class="error mobile-error"></p>
             <input
               type="password"
               placeholder="enter password"
               name="password"
             />
+            <p class="error password-error"></p>
             <input type="file" name="avatar" />
+            <p class="error avatar-error"></p>
+            <p class="error common-error"></p>
             <input type="submit" value="Submit" />
           </form>
         </div>
@@ -78,11 +96,104 @@
     </div>
     <script>
       const modal = document.querySelector("#add-user-modal");
+      const form = document.querySelector("#add-user-form");
       function closeModal() {
         modal.style.display = "none";
       }
       function openModal() {
         modal.style.display = "block";
+      }
+      //form submit handler
+      form.onsubmit = async function (event) {
+        //prevent default submit
+        event.preventDefault();
+
+        //clear the error first
+        const errorPlaceHolders = document.querySelectorAll("p.error");
+
+        for (let i = 0; i < errorPlaceHolders.length; i++) {
+          errorPlaceHolders[i].style.display = "none";
+        }
+
+        const inputerrors = document.querySelectorAll("input.error");
+
+        if (inputerrors.length > 0) {
+          for (let j = 0; j < inputerrors.length; j++) {
+            inputerrors[j].classList.remove("error");
+          }
+        }
+
+        //prepare formdata
+        const formData = new FormData(form);
+
+        //send fordata to server
+        let response = await fetch("/users", {
+          method: "POST",
+          body: formData,
+        });
+
+        //create Success toast
+        const successToast = Toastify({
+          text: "User added Successfully! REloading now",
+          duration: 1000,
+        });
+        //get response
+        let result = await response.json();
+
+        //handle error and response
+        if (result.errors) {
+          //iterate through errors
+          Object.keys(result.errors).forEach((fieldName) => {
+            //add error to input tag
+            form[fieldName].classList.add("error");
+
+            //add error msg to concerned p tag
+            const errorPlaceHolder = document.querySelector(
+              `.${fieldName}-error`
+            );
+            errorPlaceHolder.textContent = result.errors[fieldName].msg;
+
+            //make all placeholder visible
+            errorPlaceHolder.style.display = "block";
+          });
+        } else {
+          //success
+          successToast.showToast();
+          closeModal();
+          document.querySelector("p.error").style.display = "none";
+
+          //reload the page
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        }
+      };
+      async function removeuser(uid) {
+        //make toast for errordelete and delete
+        const deleteToast = Toastify({
+          text: "User delete successfully",
+          duration: 2000,
+        });
+        const errorDeleteToast = Toastify({
+          text: "User Not Deleted",
+          duration: 2000,
+        });
+
+        //send request to server
+        const response = await fetch(`/users/${uid}`, {
+          method: "DELETE",
+        });
+
+        //parse the response
+        const result = await response.json();
+
+        if (result.errors) {
+          errorDeleteToast.showToast();
+        } else {
+          deleteToast.showToast();
+          //remove the user from dom
+          document.getElementById(uid).remove();
+        }
       }
     </script>
   </body>

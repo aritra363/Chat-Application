@@ -9,7 +9,7 @@
 const express = require("express");
 
 //internal dependencies
-const { getUsers, addUser } = require("../controller/usersControllers");
+const { getUsers, addUser,removeUser } = require("../controller/usersControllers");
 const decorateHtmlPage = require("../middlewares/common/decorateHtmlPage");
 const avatarUpload = require("../middlewares/users/avatarUpload");
 const {
@@ -31,6 +31,8 @@ router.post(
   addUserValidationHandler,
   addUser
 );
+//delete user
+router.delete("/:id",removeUser)
 
 //exporting the router
 module.exports = router;

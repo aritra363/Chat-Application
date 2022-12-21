@@ -7,10 +7,20 @@
 //dependencies
 const bcrypt = require("bcrypt");
 const peopleModel = require("../helpers/models/peopleModel");
+const { unlink } = require("fs");
+const path = require("path");
 
 //getUsers function (render the index page)
-const getUsers = (req, res, next) => {
-  res.render("users");
+const getUsers = async (req, res, next) => {
+  //get user's from database
+  try {
+    const userData = await peopleModel.find({});
+    res.render("users", {
+      Udata: userData,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 //add user to database
@@ -30,6 +40,7 @@ const addUser = async (req, res, next) => {
     //make new user without avatar name
     newUser = {
       ...req.body,
+      avatar: "demouser.png",
       password: hashedPassword,
     };
   }
@@ -51,8 +62,41 @@ const addUser = async (req, res, next) => {
   }
 };
 
+//remove user from db
+const removeUser = async (req, res, next) => {
+  try {
+    const user = await peopleModel.findByIdAndDelete({
+      _id: req.params.id,
+    });
+
+    //remove user avatar
+    if (user.avatar !== "demouser.png") {
+      unlink(
+        path.join(__dirname, "../public/uploads/avatars/", user.avatar),
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
+    }
+
+    //send response
+    res.status(200).send({
+      message: "User Delete Successfully",
+    });
+  } catch (err) {
+    res.status(500).send({
+      errors: {
+        common: {
+          msg: "Could not delete the user",
+        },
+      },
+    });
+  }
+};
+
 //exporting the controller
 module.exports = {
   getUsers,
   addUser,
+  removeUser,
 };

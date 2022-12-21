@@ -18,7 +18,7 @@ const userValidator = [
   check("name")
     .isLength({ min: 3, max: 30 })
     .withMessage("Name must be min 3 and max 30 characters")
-    .isAlpha("en-US", { ignore: "-" })
+    .isAlpha("en-US", { ignore: " -" })
     .withMessage("Only alphabets")
     .trim(),
   check("email")
@@ -27,7 +27,7 @@ const userValidator = [
     .trim()
     .custom(async (value) => {
       try {
-        const user = await peopleModel.find({ email: value });
+        const user = await peopleModel.findOne({ email: value });
         if (user) {
           throw createError("Email already Exist");
         }
